@@ -1,0 +1,38 @@
+name: Deploy NBA Stats Dashboard
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Zip Lambda
+        run: |
+          cd backend/lambda
+          zip lambda.zip getStats.js
+          aws s3 cp lambda.zip s3://${{ secrets.DEPLOY_BUCKET }}/lambda.zip
+
+      - name: Deploy CloudFormation
+        run: |
+          aws cloudformation deploy \
+            --template-file infrastructure/template.yaml \
+            --stack-name nba-stats-dashboard \
+            --capabilities CAPABILITY_NAMED_IAM \
+            --parameter-overrides BallDontLieApiKey=${{ secrets.BALLDONTLIE_API_KEY }}

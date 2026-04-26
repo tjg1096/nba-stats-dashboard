@@ -1,0 +1,103 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: NBA Stats Dashboard
+
+Parameters:
+  BallDontLieApiKey:
+    Type: String
+    NoEcho: true
+
+Resources:
+  StatsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: nba-stats-cache
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: statId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: statId
+          KeyType: HASH
+
+  GetStatsFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: nba-get-stats
+      Runtime: nodejs20.x
+      Handler: getStats.handler
+      Role: !GetAtt LambdaRole.Arn
+      Code:
+        S3Bucket: REPLACE_WITH_DEPLOY_BUCKET
+        S3Key: lambda.zip
+      Environment:
+        Variables:
+          BALLDONTLIE_API_KEY: !Ref BallDontLieApiKey
+          TABLE_NAME: !Ref StatsTable
+
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: LambdaBasicPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:*
+                  - dynamodb:*
+                Resource: "*"
+
+  HttpApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: nba-stats-api
+      ProtocolType: HTTP
+      CorsConfiguration:
+        AllowOrigins:
+          - "*"
+        AllowMethods:
+          - GET
+          - OPTIONS
+        AllowHeaders:
+          - "*"
+
+  StatsIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref HttpApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !GetAtt GetStatsFunction.Arn
+      PayloadFormatVersion: "2.0"
+
+  StatsRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: GET /stats
+      Target: !Sub integrations/${StatsIntegration}
+
+  ApiStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref HttpApi
+      StageName: prod
+      AutoDeploy: true
+
+  LambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref GetStatsFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+
+Outputs:
+  ApiUrl:
+    Value: !Sub https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com/prod
