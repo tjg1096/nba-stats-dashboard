@@ -27,7 +27,7 @@ Resources:
       Handler: getStats.handler
       Role: !GetAtt LambdaRole.Arn
       Code:
-        S3Bucket: REPLACE_WITH_DEPLOY_BUCKET
+        S3Bucket: nba-stats-deploy-tyler
         S3Key: lambda.zip
       Environment:
         Variables:
