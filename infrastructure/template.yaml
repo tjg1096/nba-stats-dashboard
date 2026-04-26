@@ -27,7 +27,7 @@ Resources:
       CodeUri: ../backend/getTeams
       Environment:
         Variables:
-          API_KEY: YOUR_API_KEY
+          API_KEY: 4cd9312d-df03-406c-92d0-fbad477cc8d8
       Events:
         Api:
           Type: Api
@@ -43,7 +43,7 @@ Resources:
       CodeUri: ../backend/getPlayers
       Environment:
         Variables:
-          API_KEY: YOUR_API_KEY
+          API_KEY: 4cd9312d-df03-406c-92d0-fbad477cc8d8
       Events:
         Api:
           Type: Api
