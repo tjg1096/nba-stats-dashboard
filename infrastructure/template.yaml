@@ -1,103 +1,90 @@
-AWSTemplateFormatVersion: "2010-09-09"
-Description: NBA Stats Dashboard
-
-Parameters:
-  BallDontLieApiKey:
-    Type: String
-    NoEcho: true
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
 
 Resources:
-  StatsTable:
+
+  FavoritesTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: nba-stats-cache
+      TableName: Favorites
       BillingMode: PAY_PER_REQUEST
       AttributeDefinitions:
-        - AttributeName: statId
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: playerId
           AttributeType: S
       KeySchema:
-        - AttributeName: statId
+        - AttributeName: userId
           KeyType: HASH
+        - AttributeName: playerId
+          KeyType: RANGE
 
-  GetStatsFunction:
-    Type: AWS::Lambda::Function
+  GetTeamsFunction:
+    Type: AWS::Serverless::Function
     Properties:
-      FunctionName: nba-get-stats
-      Runtime: nodejs20.x
-      Handler: getStats.handler
-      Role: !GetAtt LambdaRole.Arn
-      Code:
-        S3Bucket: nba-stats-deploy-tyler
-        S3Key: lambda.zip
+      Runtime: nodejs18.x
+      Handler: index.handler
+      CodeUri: ../backend/getTeams
       Environment:
         Variables:
-          BALLDONTLIE_API_KEY: !Ref BallDontLieApiKey
-          TABLE_NAME: !Ref StatsTable
+          API_KEY: YOUR_API_KEY
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /teams
+            Method: get
 
-  LambdaRole:
-    Type: AWS::IAM::Role
+  GetPlayersFunction:
+    Type: AWS::Serverless::Function
     Properties:
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: lambda.amazonaws.com
-            Action: sts:AssumeRole
+      Runtime: nodejs18.x
+      Handler: index.handler
+      CodeUri: ../backend/getPlayers
+      Environment:
+        Variables:
+          API_KEY: YOUR_API_KEY
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /players
+            Method: get
+
+  SaveFavoriteFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs18.x
+      Handler: index.handler
+      CodeUri: ../backend/saveFavorite
       Policies:
-        - PolicyName: LambdaBasicPolicy
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action:
-                  - logs:*
-                  - dynamodb:*
-                Resource: "*"
+        - DynamoDBCrudPolicy:
+            TableName: Favorites
+      Environment:
+        Variables:
+          TABLE: Favorites
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /favorite
+            Method: post
 
-  HttpApi:
-    Type: AWS::ApiGatewayV2::Api
+  GetFavoritesFunction:
+    Type: AWS::Serverless::Function
     Properties:
-      Name: nba-stats-api
-      ProtocolType: HTTP
-      CorsConfiguration:
-        AllowOrigins:
-          - "*"
-        AllowMethods:
-          - GET
-          - OPTIONS
-        AllowHeaders:
-          - "*"
-
-  StatsIntegration:
-    Type: AWS::ApiGatewayV2::Integration
-    Properties:
-      ApiId: !Ref HttpApi
-      IntegrationType: AWS_PROXY
-      IntegrationUri: !GetAtt GetStatsFunction.Arn
-      PayloadFormatVersion: "2.0"
-
-  StatsRoute:
-    Type: AWS::ApiGatewayV2::Route
-    Properties:
-      ApiId: !Ref HttpApi
-      RouteKey: GET /stats
-      Target: !Sub integrations/${StatsIntegration}
-
-  ApiStage:
-    Type: AWS::ApiGatewayV2::Stage
-    Properties:
-      ApiId: !Ref HttpApi
-      StageName: prod
-      AutoDeploy: true
-
-  LambdaPermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !Ref GetStatsFunction
-      Action: lambda:InvokeFunction
-      Principal: apigateway.amazonaws.com
-
-Outputs:
-  ApiUrl:
-    Value: !Sub https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com/prod
+      Runtime: nodejs18.x
+      Handler: index.handler
+      CodeUri: ../backend/getFavorites
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: Favorites
+      Environment:
+        Variables:
+          TABLE: Favorites
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /favorites
+            Method: get

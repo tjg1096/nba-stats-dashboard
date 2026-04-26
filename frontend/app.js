@@ -1,33 +1,52 @@
-const API_URL = "YOUR_API_GATEWAY_URL_HERE";
+const API = "YOUR_API_URL";
 
-async function loadTeams() {
-  const status = document.getElementById("status");
-  const teamsDiv = document.getElementById("teams");
+async function searchPlayer() {
+  const search = document.getElementById("search").value;
 
-  status.textContent = "Loading teams...";
-  teamsDiv.innerHTML = "";
+  const res = await fetch(`${API}/players?search=${search}`);
+  const data = await res.json();
 
-  try {
-    const response = await fetch(`${API_URL}/stats`);
-    const data = await response.json();
+  const container = document.getElementById("players");
+  container.innerHTML = "";
 
-    data.data.forEach(team => {
-      const card = document.createElement("div");
-      card.className = "card";
+  data.data.forEach(player => {
+    const div = document.createElement("div");
 
-      card.innerHTML = `
-        <h2>${team.full_name}</h2>
-        <p><strong>City:</strong> ${team.city}</p>
-        <p><strong>Conference:</strong> ${team.conference}</p>
-        <p><strong>Division:</strong> ${team.division}</p>
-      `;
+    div.innerHTML = `
+      ${player.first_name} ${player.last_name}
+      <button onclick="saveFavorite(${player.id}, '${player.first_name} ${player.last_name}')">
+        Save
+      </button>
+    `;
 
-      teamsDiv.appendChild(card);
-    });
-
-    status.textContent = "Teams loaded successfully.";
-  } catch (error) {
-    console.error(error);
-    status.textContent = "Error loading teams.";
-  }
+    container.appendChild(div);
+  });
 }
+
+async function saveFavorite(id, name) {
+  await fetch(`${API}/favorite`, {
+    method: "POST",
+    body: JSON.stringify({
+      playerId: id,
+      name: name
+    })
+  });
+
+  loadFavorites();
+}
+
+async function loadFavorites() {
+  const res = await fetch(`${API}/favorites`);
+  const data = await res.json();
+
+  const container = document.getElementById("favorites");
+  container.innerHTML = "";
+
+  data.forEach(fav => {
+    const div = document.createElement("div");
+    div.innerText = fav.name;
+    container.appendChild(div);
+  });
+}
+
+loadFavorites();

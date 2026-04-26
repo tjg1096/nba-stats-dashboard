@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>NBA Stats Dashboard</title>
+  <title>NBA Dashboard</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <h1>NBA Stats Dashboard</h1>
-    <p>View NBA team statistics using a serverless AWS app.</p>
-  </header>
 
-  <main>
-    <button onclick="loadTeams()">Load NBA Teams</button>
-    <div id="status"></div>
-    <div id="teams" class="grid"></div>
-  </main>
+<h1>NBA Dashboard</h1>
 
-  <script src="script.js"></script>
+<input id="search" placeholder="Search player">
+<button onclick="searchPlayer()">Search</button>
+
+<div id="players"></div>
+
+<h2>Favorites</h2>
+<div id="favorites"></div>
+
+<script src="app.js"></script>
 </body>
 </html>
