@@ -71,11 +71,20 @@ async function getStats() {
   }
 
   data.data.forEach(game => {
+    const gameTime = new Date(game.status);
+
     statsDiv.innerHTML += `
       <div class="card">
         <h3>${game.visitor_team.full_name} vs ${game.home_team.full_name}</h3>
-        <p>Status: ${game.status}</p>
-        <p>Date: ${new Date(game.date).toLocaleString()}</p>
+        <p>Game Time: ${gameTime.toLocaleString("en-US", {
+          timeZone: "America/New_York",
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+          hour: "numeric",
+          minute: "2-digit"
+        })}</p>
+        <p>Status: ${game.period > 0 ? "In Progress / Final" : "Scheduled"}</p>
         <p>Score: ${game.visitor_team_score} - ${game.home_team_score}</p>
       </div>
     `;
