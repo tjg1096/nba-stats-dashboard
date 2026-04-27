@@ -1,4 +1,4 @@
-const API = "YOUR_API_URL";
+const API = "https://vfhkxgciej.execute-api.us-east-1.amazonaws.com/Prod/";
 
 async function searchPlayer() {
   const search = document.getElementById("search").value;
