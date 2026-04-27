@@ -1,17 +1,10 @@
 exports.handler = async (event) => {
   try {
-    const playerId = event.queryStringParameters?.playerId;
-
-    if (!playerId) {
-      return {
-        statusCode: 400,
-        headers: cors(),
-        body: JSON.stringify({ message: "Missing playerId" })
-      };
-    }
+    const season = event.queryStringParameters?.season || "2024";
+    const perPage = event.queryStringParameters?.per_page || "5";
 
     const response = await fetch(
-      `https://api.balldontlie.io/v1/players/${playerId}`,
+      `https://api.balldontlie.io/v1/games?seasons[]=${season}&per_page=${perPage}`,
       {
         headers: {
           Authorization: process.env.API_KEY
@@ -32,29 +25,17 @@ exports.handler = async (event) => {
       };
     }
 
-    const result = JSON.parse(text);
-    const player = result.data || result;
-
     return {
       statusCode: 200,
       headers: cors(),
-      body: JSON.stringify({
-        id: player.id,
-        name: `${player.first_name} ${player.last_name}`,
-        team: player.team?.full_name || "Unknown",
-        points: "N/A",
-        rebounds: "N/A",
-        assists: "N/A",
-        steals: "N/A",
-        blocks: "N/A"
-      })
+      body: text
     };
   } catch (error) {
     return {
       statusCode: 500,
       headers: cors(),
       body: JSON.stringify({
-        message: "Failed to fetch player stats",
+        message: "Failed to fetch game stats",
         error: error.message
       })
     };

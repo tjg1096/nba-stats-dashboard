@@ -59,23 +59,28 @@ async function loadFavorites() {
   });
 }
 
-async function getStats(playerId) {
-  const response = await fetch(`${API_BASE_URL}/stats?playerId=${playerId}`);
-  const player = await response.json();
+async function getStats() {
+  const response = await fetch(`${API_BASE_URL}/stats?season=2024&per_page=5`);
+  const data = await response.json();
 
   const statsDiv = document.getElementById("statsResults");
+  statsDiv.innerHTML = "";
 
-  statsDiv.innerHTML = `
-    <div class="card">
-      <h3>${player.name}</h3>
-      <p>Team: ${player.team}</p>
-      <p>Points: ${player.points}</p>
-      <p>Rebounds: ${player.rebounds}</p>
-      <p>Assists: ${player.assists}</p>
-      <p>Steals: ${player.steals}</p>
-      <p>Blocks: ${player.blocks}</p>
-    </div>
-  `;
+  data.data.forEach(game => {
+    statsDiv.innerHTML += `
+      <div class="card">
+        <h3>${game.visitor_team.full_name} vs ${game.home_team.full_name}</h3>
+        <p>Status: ${game.status}</p>
+        <p>Date: ${game.date}</p>
+        <p>Season: ${game.season}</p>
+        <p>Score: ${game.visitor_team_score} - ${game.home_team_score}</p>
+        <p>Q1: ${game.visitor_q1 ?? "N/A"} - ${game.home_q1 ?? "N/A"}</p>
+        <p>Q2: ${game.visitor_q2 ?? "N/A"} - ${game.home_q2 ?? "N/A"}</p>
+        <p>Q3: ${game.visitor_q3 ?? "N/A"} - ${game.home_q3 ?? "N/A"}</p>
+        <p>Q4: ${game.visitor_q4 ?? "N/A"} - ${game.home_q4 ?? "N/A"}</p>
+      </div>
+    `;
+  });
 }
 
 loadFavorites();
