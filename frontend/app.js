@@ -1,30 +1,28 @@
 const API_BASE_URL = "https://vfhkxgciej.execute-api.us-east-1.amazonaws.com/Prod";
 
 async function searchPlayer() {
-  const search = document.getElementById("search").value;
+  const search = document.getElementById("searchInput").value;
 
-  const res = await fetch(`${API_BASE_URL}/players?search=${search}`);
-  const data = await res.json();
+  const response = await fetch(`${API_BASE_URL}/players?search=${search}`);
+  const data = await response.json();
 
-  const container = document.getElementById("players");
-  container.innerHTML = "";
+  const playersDiv = document.getElementById("playersResults");
+  playersDiv.innerHTML = "";
 
   data.data.forEach(player => {
-    const div = document.createElement("div");
-
-    div.innerHTML = `
-      ${player.first_name} ${player.last_name}
-      <button onclick="saveFavorite(${player.id}, '${player.first_name} ${player.last_name}')">
-        Save
-      </button>
+    playersDiv.innerHTML += `
+      <div class="card">
+        <h3>${player.first_name} ${player.last_name}</h3>
+        <p>Team: ${player.team.full_name}</p>
+        <button onclick='saveFavorite(${JSON.stringify(player)})'>Save</button>
+        <button onclick="getStats('${player.id}')">View Stats</button>
+      </div>
     `;
-
-    container.appendChild(div);
   });
 }
 
 async function saveFavorite(player) {
-  await fetch(`${API_BASE_URL}/favorite`, {
+  const response = await fetch(`${API_BASE_URL}/favorite`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -35,20 +33,29 @@ async function saveFavorite(player) {
     })
   });
 
-  alert("Favorite saved!");
+  const result = await response.json();
+
+  if (result.success) {
+    alert(`${player.first_name} ${player.last_name} saved!`);
+    loadFavorites();
+  } else {
+    alert("Favorite did not save.");
+  }
 }
 
 async function loadFavorites() {
-  const res = await fetch(`${API_BASE_URL}/favorites`);
-  const data = await res.json();
+  const response = await fetch(`${API_BASE_URL}/favorites`);
+  const favorites = await response.json();
 
-  const container = document.getElementById("favorites");
-  container.innerHTML = "";
+  const favoritesDiv = document.getElementById("favoritesResults");
+  favoritesDiv.innerHTML = "";
 
-  data.forEach(fav => {
-    const div = document.createElement("div");
-    div.innerText = fav.name;
-    container.appendChild(div);
+  favorites.forEach(player => {
+    favoritesDiv.innerHTML += `
+      <div class="card">
+        <h3>${player.name}</h3>
+      </div>
+    `;
   });
 }
 

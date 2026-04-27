@@ -11,6 +11,11 @@ Globals:
     Runtime: nodejs18.x
     Timeout: 10
     MemorySize: 128
+  Api:
+    Cors:
+      AllowMethods: "'GET,POST,OPTIONS'"
+      AllowHeaders: "'Content-Type'"
+      AllowOrigin: "'*'"
 
 Resources:
   FavoritesTable:
@@ -43,10 +48,10 @@ Resources:
           Properties:
             Path: /teams
             Method: ANY
-    GetStatsFunction:
+
+  GetStatsFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Runtime: nodejs18.x
       Handler: index.handler
       CodeUri: ../backend/getStats
       Environment:
@@ -57,8 +62,7 @@ Resources:
           Type: Api
           Properties:
             Path: /stats
-            Method: get
-
+            Method: ANY
 
   GetPlayersFunction:
     Type: AWS::Serverless::Function
@@ -91,7 +95,7 @@ Resources:
           Type: Api
           Properties:
             Path: /favorite
-            Method: post
+            Method: ANY
 
   GetFavoritesFunction:
     Type: AWS::Serverless::Function
