@@ -8,17 +8,18 @@
 
 <h1>NBA Dashboard</h1>
 
-<input id="search" placeholder="Search player">
+<input id="searchInput" placeholder="Search player name">
+
 <button onclick="searchPlayer()">Search</button>
 
-<div id="players"></div>
+<h2>Players</h2>
+<div id="playersResults"></div>
 
 <h2>Favorites</h2>
-<div id="favorites"></div>
+<div id="favoritesResults"></div>
 
-<h2>Player Stats</h2>
+<h2>Stats</h2>
 <div id="statsResults"></div>
-<button onclick="getStats('${player.id}')">View Stats</button>
 
 <script src="app.js"></script>
 </body>
