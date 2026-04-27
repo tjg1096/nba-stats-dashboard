@@ -28,7 +28,8 @@ async function saveFavorite(player) {
     },
     body: JSON.stringify({
       playerId: String(player.id),
-      name: `${player.first_name} ${player.last_name}`
+      name: `${player.first_name} ${player.last_name}`,
+      team: player.team?.full_name || "Unknown"
     })
   });
 
@@ -53,9 +54,26 @@ async function loadFavorites() {
     favoritesDiv.innerHTML += `
       <div class="card">
         <h3>${player.name}</h3>
+        <p>Team: ${player.team || "Unknown"}</p>
+        <button onclick="deleteFavorite('${player.playerId}')">Remove</button>
       </div>
     `;
   });
+}
+
+async function deleteFavorite(playerId) {
+  const response = await fetch(`${API_BASE_URL}/favorite?playerId=${playerId}`, {
+    method: "DELETE"
+  });
+
+  const result = await response.json();
+
+  if (result.success) {
+    alert("Favorite removed!");
+    loadFavorites();
+  } else {
+    alert("Could not remove favorite.");
+  }
 }
 
 async function getStats() {

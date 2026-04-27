@@ -1,19 +1,25 @@
 const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
-const { DynamoDBDocumentClient, PutCommand } = require("@aws-sdk/lib-dynamodb");
+const { DynamoDBDocumentClient, DeleteCommand } = require("@aws-sdk/lib-dynamodb");
 
 const db = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
 exports.handler = async (event) => {
   try {
-    const body = JSON.parse(event.body || "{}");
+    const playerId = event.queryStringParameters?.playerId;
 
-    await db.send(new PutCommand({
+    if (!playerId) {
+      return {
+        statusCode: 400,
+        headers: cors(),
+        body: JSON.stringify({ message: "Missing playerId" })
+      };
+    }
+
+    await db.send(new DeleteCommand({
       TableName: process.env.TABLE,
-      Item: {
+      Key: {
         userId: "demo",
-        playerId: String(body.playerId),
-        name: body.name,
-        team: body.team || "Unknown"
+        playerId: String(playerId)
       }
     }));
 
@@ -35,6 +41,6 @@ function cors() {
   return {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "*",
-    "Access-Control-Allow-Methods": "OPTIONS,POST,GET,DELETE"
+    "Access-Control-Allow-Methods": "OPTIONS,GET,POST,DELETE"
   };
 }

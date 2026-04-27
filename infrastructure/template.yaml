@@ -13,7 +13,7 @@ Globals:
     MemorySize: 128
   Api:
     Cors:
-      AllowMethods: "'GET,POST,OPTIONS'"
+      AllowMethods: "'GET,POST,DELETE,OPTIONS'"
       AllowHeaders: "'Content-Type'"
       AllowOrigin: "'*'"
 
@@ -49,21 +49,6 @@ Resources:
             Path: /teams
             Method: ANY
 
-  GetStatsFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      Handler: index.handler
-      CodeUri: ../backend/getStats
-      Environment:
-        Variables:
-          API_KEY: !Ref BallDontLieApiKey
-      Events:
-        Api:
-          Type: Api
-          Properties:
-            Path: /stats
-            Method: ANY
-
   GetPlayersFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -77,6 +62,21 @@ Resources:
           Type: Api
           Properties:
             Path: /players
+            Method: ANY
+
+  GetStatsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      CodeUri: ../backend/getStats
+      Environment:
+        Variables:
+          API_KEY: !Ref BallDontLieApiKey
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /stats
             Method: ANY
 
   SaveFavoriteFunction:
@@ -95,7 +95,25 @@ Resources:
           Type: Api
           Properties:
             Path: /favorite
-            Method: ANY
+            Method: POST
+
+  DeleteFavoriteFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      CodeUri: ../backend/deleteFavorite
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref FavoritesTable
+      Environment:
+        Variables:
+          TABLE: !Ref FavoritesTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /favorite
+            Method: DELETE
 
   GetFavoritesFunction:
     Type: AWS::Serverless::Function
