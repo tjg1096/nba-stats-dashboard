@@ -14,7 +14,7 @@ async function searchPlayer() {
   <div class="card">
     <h3>${player.first_name} ${player.last_name}</h3>
     <p>${player.team.full_name} (${player.team.abbreviation})</p>
-    <p>${player.team.conference} • ${player.team.division}</p>
+    <p>${player.team.conference} - ${player.team.division}</p>
     <p>Position: ${player.position || "N/A"}</p>
     <button onclick='saveFavorite(${JSON.stringify(player)})'>Save</button>
   </div>
