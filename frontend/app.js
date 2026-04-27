@@ -3,7 +3,7 @@ const API_BASE_URL = "https://vfhkxgciej.execute-api.us-east-1.amazonaws.com/Pro
 async function searchPlayer() {
   const search = document.getElementById("search").value;
 
-  const res = await fetch(`${API}/players?search=${search}`);
+  const res = await fetch(`${API_BASE_URL}/players?search=${search}`);
   const data = await res.json();
 
   const container = document.getElementById("players");
@@ -39,7 +39,7 @@ async function saveFavorite(player) {
 }
 
 async function loadFavorites() {
-  const res = await fetch(`${API}/favorites`);
+  const res = await fetch(`${API_BASE_URL}/favorites`);
   const data = await res.json();
 
   const container = document.getElementById("favorites");
