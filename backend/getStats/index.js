@@ -12,16 +12,26 @@ exports.handler = async (event) => {
       }
     });
 
-    const data = await response.json();
+    const text = await response.text();
+
+    if (!response.ok) {
+      return {
+        statusCode: response.status,
+        headers: cors(),
+        body: JSON.stringify({
+          message: "balldontlie API error",
+          status: response.status,
+          response: text
+        })
+      };
+    }
 
     return {
       statusCode: 200,
       headers: cors(),
-      body: JSON.stringify(data)
+      body: text
     };
   } catch (error) {
-    console.error("GetStats error:", error);
-
     return {
       statusCode: 500,
       headers: cors(),
