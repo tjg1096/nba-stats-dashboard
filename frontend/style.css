@@ -1,52 +1,175 @@
+:root {
+  --nba-blue: #17408b;
+  --nba-red: #c9082a;
+  --dark: #07111f;
+  --light: #f5f7fb;
+  --card: #ffffff;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --border: #d8dee9;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f4f6f8;
-  color: #222;
+  min-height: 100vh;
+  font-family: Arial, Helvetica, sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(201, 8, 42, 0.25), transparent 35%),
+    radial-gradient(circle at top right, rgba(23, 64, 139, 0.3), transparent 35%),
+    linear-gradient(135deg, #07111f 0%, #12213a 45%, #f5f7fb 45%, #f5f7fb 100%);
+  color: var(--text);
+  padding: 30px;
+}
+
+h1 {
   text-align: center;
-}
-
-header {
-  background: #1d3557;
   color: white;
-  padding: 30px;
+  font-size: 42px;
+  margin-bottom: 30px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
-main {
-  padding: 30px;
+h1::after {
+  content: "";
+  display: block;
+  width: 120px;
+  height: 5px;
+  background: linear-gradient(90deg, var(--nba-blue), white, var(--nba-red));
+  margin: 14px auto 0;
+  border-radius: 999px;
+}
+
+section {
+  max-width: 900px;
+  margin: 22px auto;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: 0 18px 40px rgba(7, 17, 31, 0.18);
+}
+
+section h2 {
+  margin-top: 0;
+  color: var(--nba-blue);
+  font-size: 24px;
+  border-left: 6px solid var(--nba-red);
+  padding-left: 12px;
+}
+
+input {
+  width: min(100%, 620px);
+  padding: 13px 15px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  font-size: 16px;
+  outline: none;
+  margin-right: 8px;
+}
+
+input:focus {
+  border-color: var(--nba-blue);
+  box-shadow: 0 0 0 4px rgba(23, 64, 139, 0.15);
 }
 
 button {
-  padding: 12px 20px;
   border: none;
-  border-radius: 8px;
-  background: #e63946;
-  color: white;
-  font-size: 16px;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-weight: 700;
   cursor: pointer;
+  color: white;
+  background: linear-gradient(135deg, var(--nba-blue), #2563eb);
+  box-shadow: 0 8px 18px rgba(23, 64, 139, 0.25);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 button:hover {
-  background: #c1121f;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(23, 64, 139, 0.35);
 }
 
-#status {
-  margin: 20px;
-  font-weight: bold;
-}
-
-.grid {
-  max-width: 1100px;
-  margin: 30px auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
+button:active {
+  transform: translateY(0);
 }
 
 .card {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  text-align: left;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  background: var(--card);
+  margin: 14px 0;
+  padding: 18px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 24px rgba(7, 17, 31, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 7px;
+  background: linear-gradient(180deg, var(--nba-blue), var(--nba-red));
+}
+
+.card h3 {
+  margin: 0 0 8px;
+  color: var(--dark);
+  font-size: 22px;
+}
+
+.card p {
+  margin: 6px 0;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.card button {
+  margin-top: 10px;
+  margin-right: 8px;
+}
+
+.card button:first-of-type {
+  background: linear-gradient(135deg, var(--nba-red), #ef233c);
+}
+
+#playersResults,
+#favoritesResults,
+#statsResults {
+  margin-top: 18px;
+}
+
+@media (max-width: 700px) {
+  body {
+    padding: 18px;
+  }
+
+  h1 {
+    font-size: 30px;
+  }
+
+  section {
+    padding: 18px;
+  }
+
+  input {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  button {
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  .card button {
+    width: 100%;
+  }
 }

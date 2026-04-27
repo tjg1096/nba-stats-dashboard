@@ -1,26 +1,34 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>NBA Dashboard</title>
+  <title>NBA Stats Dashboard</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <h1>NBA Stats Dashboard</h1>
 
-<h1>NBA Dashboard</h1>
+  <section>
+    <h2>Search Players</h2>
+    <input id="searchInput" placeholder="Enter player name">
+    <button onclick="searchPlayer()">Search</button>
+  </section>
 
-<input id="searchInput" placeholder="Search player name">
+  <section>
+    <h2>Players</h2>
+    <div id="playersResults"></div>
+  </section>
 
-<button onclick="searchPlayer()">Search</button>
+  <section>
+    <h2>Player Info</h2>
+    <div id="statsResults"></div>
+  </section>
 
-<h2>Players</h2>
-<div id="playersResults"></div>
+  <section>
+    <h2>Favorites</h2>
+    <button onclick="loadFavorites()">Refresh Favorites</button>
+    <div id="favoritesResults"></div>
+  </section>
 
-<h2>Favorites</h2>
-<div id="favoritesResults"></div>
-
-<h2>Stats</h2>
-<div id="statsResults"></div>
-
-<script src="app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

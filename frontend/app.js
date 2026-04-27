@@ -15,7 +15,7 @@ async function searchPlayer() {
         <h3>${player.first_name} ${player.last_name}</h3>
         <p>Team: ${player.team.full_name}</p>
         <button onclick='saveFavorite(${JSON.stringify(player)})'>Save</button>
-        <button onclick="getStats('${player.id}')">View Stats</button>
+        <button onclick="getStats('${player.id}')">View Player Info</button>
       </div>
     `;
   });
@@ -61,23 +61,19 @@ async function loadFavorites() {
 
 async function getStats(playerId) {
   const response = await fetch(`${API_BASE_URL}/stats?playerId=${playerId}`);
-  const data = await response.json();
+  const player = await response.json();
 
   const statsDiv = document.getElementById("statsResults");
-  statsDiv.innerHTML = "";
 
-  data.data.forEach(stat => {
-    statsDiv.innerHTML += `
-      <div class="card">
-        <h3>${stat.player.first_name} ${stat.player.last_name}</h3>
-        <p>Points: ${stat.pts}</p>
-        <p>Rebounds: ${stat.reb}</p>
-        <p>Assists: ${stat.ast}</p>
-        <p>Steals: ${stat.stl}</p>
-        <p>Blocks: ${stat.blk}</p>
-      </div>
-    `;
-  });
+  statsDiv.innerHTML = `
+    <div class="card">
+      <h3>${player.name}</h3>
+      <p>Team: ${player.team}</p>
+      <p>Position: ${player.position}</p>
+      <p>Height: ${player.height}</p>
+      <p>Weight: ${player.weight}</p>
+    </div>
+  `;
 }
 
 loadFavorites();
