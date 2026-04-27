@@ -13,8 +13,12 @@ exports.handler = async (event) => {
         userId: "demo",
         playerId: String(body.playerId),
         name: body.name,
-        team: body.team || "Unknown"
-      }
+        team: body.team || "Unknown",
+        abbreviation: body.abbreviation || "N/A",
+        conference: body.conference || "N/A",
+        division: body.division || "N/A",
+        position: body.position || "N/A"
+    }
     }));
 
     return {

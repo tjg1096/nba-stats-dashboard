@@ -11,12 +11,14 @@ async function searchPlayer() {
 
   data.data.forEach(player => {
     playersDiv.innerHTML += `
-      <div class="card">
-        <h3>${player.first_name} ${player.last_name}</h3>
-        <p>Team: ${player.team.full_name}</p>
-        <button onclick='saveFavorite(${JSON.stringify(player)})'>Save</button>
-      </div>
-    `;
+  <div class="card">
+    <h3>${player.first_name} ${player.last_name}</h3>
+    <p>${player.team.full_name} (${player.team.abbreviation})</p>
+    <p>${player.team.conference} • ${player.team.division}</p>
+    <p>Position: ${player.position || "N/A"}</p>
+    <button onclick='saveFavorite(${JSON.stringify(player)})'>Save</button>
+  </div>
+` ;
   });
 }
 
@@ -29,7 +31,11 @@ async function saveFavorite(player) {
     body: JSON.stringify({
       playerId: String(player.id),
       name: `${player.first_name} ${player.last_name}`,
-      team: player.team?.full_name || "Unknown"
+      team: player.team?.full_name || "Unknown",
+      abbreviation: player.team?.abbreviation || "N/A",
+      conference: player.team?.conference || "N/A",
+      division: player.team?.division || "N/A",
+      position: player.position || "N/A"
     })
   });
 
@@ -54,7 +60,9 @@ async function loadFavorites() {
     favoritesDiv.innerHTML += `
       <div class="card">
         <h3>${player.name}</h3>
-        <p>Team: ${player.team || "Unknown"}</p>
+        <p>${player.team || "Unknown"} (${player.abbreviation || "N/A"})</p>
+        <p>${player.conference || "N/A"} • ${player.division || "N/A"}</p>
+        <p>Position: ${player.position || "N/A"}</p>
         <button onclick="deleteFavorite('${player.playerId}')">Remove</button>
       </div>
     `;
