@@ -10,7 +10,7 @@ exports.handler = async (event) => {
     await db.send(new PutCommand({
       TableName: process.env.TABLE,
       Item: {
-        userId: "demo",
+        userId: body.userId || "demo",
         playerId: String(body.playerId),
         name: body.name,
         team: body.team || "Unknown",

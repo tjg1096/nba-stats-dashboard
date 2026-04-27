@@ -2,11 +2,29 @@
 <html>
 <head>
   <meta charset="UTF-8">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <title>NBA Dashboard</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <h1>NBA Dashboard</h1>
+
+  <div id="loginSection">
+  <div id="g_id_onload"
+       data-client_id="192011811875-74km7c8s5ljfk44v135qvudtdvkpdujg.apps.googleusercontent.com"
+       data-callback="handleCredentialResponse">
+  </div>
+
+  <div class="g_id_signin"
+       data-type="standard"
+       data-size="large"
+       data-theme="outline"
+       data-text="signin_with"
+       data-shape="rectangular">
+  </div>
+</div>
+
+<div id="userInfo"></div>
 
   <section>
     <h2>Search Players</h2>

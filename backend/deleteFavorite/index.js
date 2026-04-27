@@ -5,8 +5,7 @@ const db = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
 exports.handler = async (event) => {
   try {
-    const playerId = event.queryStringParameters?.playerId;
-
+    const userId = event.queryStringParameters?.userId || "demo";
     if (!playerId) {
       return {
         statusCode: 400,
@@ -18,7 +17,7 @@ exports.handler = async (event) => {
     await db.send(new DeleteCommand({
       TableName: process.env.TABLE,
       Key: {
-        userId: "demo",
+        userId: userId,
         playerId: String(playerId)
       }
     }));

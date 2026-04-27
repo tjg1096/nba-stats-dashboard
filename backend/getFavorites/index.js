@@ -6,7 +6,6 @@ const db = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 exports.handler = async (event) => {
   try {
     const userId = event.queryStringParameters?.userId || "demo";
-
     const data = await db.send(new QueryCommand({
       TableName: process.env.TABLE,
       KeyConditionExpression: "userId = :u",

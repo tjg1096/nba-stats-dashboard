@@ -1,5 +1,39 @@
 const API_BASE_URL = "https://vfhkxgciej.execute-api.us-east-1.amazonaws.com/Prod";
 
+let currentUser = {
+  userId: "demo",
+  name: "Guest"
+};
+
+function handleCredentialResponse(response) {
+  const payload = parseJwt(response.credential);
+
+  currentUser = {
+    userId: payload.sub,
+    name: payload.name
+  };
+
+  document.getElementById("userInfo").innerHTML = `
+    <p>Signed in as <strong>${currentUser.name}</strong></p>
+  `;
+
+  loadFavorites();
+}
+
+function parseJwt(token) {
+  const base64Url = token.split(".")[1];
+  const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  const jsonPayload = decodeURIComponent(
+    atob(base64)
+      .split("")
+      .map(c => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+      .join("")
+  );
+
+  return JSON.parse(jsonPayload);
+}
+
+
 async function searchPlayer() {
   const search = document.getElementById("searchInput").value;
 
@@ -29,6 +63,7 @@ async function saveFavorite(player) {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
+      userId: currentUser.userId,
       playerId: String(player.id),
       name: `${player.first_name} ${player.last_name}`,
       team: player.team?.full_name || "Unknown",
@@ -50,7 +85,7 @@ async function saveFavorite(player) {
 }
 
 async function loadFavorites() {
-  const response = await fetch(`${API_BASE_URL}/favorites`);
+  const response = await fetch(`${API_BASE_URL}/favorites?userId=${currentUser.userId}`);
   const favorites = await response.json();
 
   const favoritesDiv = document.getElementById("favoritesResults");
@@ -70,7 +105,7 @@ async function loadFavorites() {
 }
 
 async function deleteFavorite(playerId) {
-  const response = await fetch(`${API_BASE_URL}/favorite?playerId=${playerId}`, {
+  const response = await fetch(`${API_BASE_URL}/favorite?userId=${currentUser.userId}&playerId=${playerId}`, {
     method: "DELETE"
   });
 
