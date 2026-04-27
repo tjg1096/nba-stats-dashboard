@@ -1,10 +1,9 @@
-exports.handler = async (event) => {
+exports.handler = async () => {
   try {
-    const season = event.queryStringParameters?.season || "2024";
-    const perPage = event.queryStringParameters?.per_page || "5";
+    const today = new Date().toISOString().split("T")[0];
 
     const response = await fetch(
-      `https://api.balldontlie.io/v1/games?seasons[]=${season}&per_page=${perPage}`,
+      `https://api.balldontlie.io/v1/games?dates[]=${today}`,
       {
         headers: {
           Authorization: process.env.API_KEY
@@ -35,7 +34,7 @@ exports.handler = async (event) => {
       statusCode: 500,
       headers: cors(),
       body: JSON.stringify({
-        message: "Failed to fetch game stats",
+        message: "Failed to fetch today's games",
         error: error.message
       })
     };
