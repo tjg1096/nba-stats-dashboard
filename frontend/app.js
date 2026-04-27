@@ -1,4 +1,4 @@
-const API = "https://vfhkxgciej.execute-api.us-east-1.amazonaws.com/Prod";
+const API_BASE_URL = "https://vfhkxgciej.execute-api.us-east-1.amazonaws.com/Prod";
 
 async function searchPlayer() {
   const search = document.getElementById("search").value;
