@@ -1,9 +1,15 @@
 const AWS = require("aws-sdk");
 const db = new AWS.DynamoDB.DocumentClient();
 
-exports.handler = async () => {
-  const data = await db.scan({
-    TableName: process.env.TABLE
+exports.handler = async (event) => {
+  const userId = event.queryStringParameters?.userId || "demo";
+
+  const data = await db.query({
+    TableName: process.env.TABLE,
+    KeyConditionExpression: "userId = :u",
+    ExpressionAttributeValues: {
+      ":u": userId
+    }
   }).promise();
 
   return {

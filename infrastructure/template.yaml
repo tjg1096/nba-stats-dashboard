@@ -1,8 +1,18 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
-Resources:
+Parameters:
+  BallDontLieApiKey:
+    Type: String
+    NoEcho: true
 
+Globals:
+  Function:
+    Runtime: nodejs18.x
+    Timeout: 10
+    MemorySize: 128
+
+Resources:
   FavoritesTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -22,47 +32,44 @@ Resources:
   GetTeamsFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Runtime: nodejs18.x
       Handler: index.handler
       CodeUri: ../backend/getTeams
       Environment:
         Variables:
-          API_KEY: 4cd9312d-df03-406c-92d0-fbad477cc8d8
+          API_KEY: !Ref BallDontLieApiKey
       Events:
         Api:
           Type: Api
           Properties:
             Path: /teams
-            Method: get
+            Method: ANY
 
   GetPlayersFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Runtime: nodejs18.x
       Handler: index.handler
       CodeUri: ../backend/getPlayers
       Environment:
         Variables:
-          API_KEY: 4cd9312d-df03-406c-92d0-fbad477cc8d8
+          API_KEY: !Ref BallDontLieApiKey
       Events:
         Api:
           Type: Api
           Properties:
             Path: /players
-            Method: get
+            Method: ANY
 
   SaveFavoriteFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Runtime: nodejs18.x
       Handler: index.handler
       CodeUri: ../backend/saveFavorite
       Policies:
         - DynamoDBCrudPolicy:
-            TableName: Favorites
+            TableName: !Ref FavoritesTable
       Environment:
         Variables:
-          TABLE: Favorites
+          TABLE: !Ref FavoritesTable
       Events:
         Api:
           Type: Api
@@ -73,18 +80,22 @@ Resources:
   GetFavoritesFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Runtime: nodejs18.x
       Handler: index.handler
       CodeUri: ../backend/getFavorites
       Policies:
         - DynamoDBReadPolicy:
-            TableName: Favorites
+            TableName: !Ref FavoritesTable
       Environment:
         Variables:
-          TABLE: Favorites
+          TABLE: !Ref FavoritesTable
       Events:
         Api:
           Type: Api
           Properties:
             Path: /favorites
-            Method: get
+            Method: ANY
+
+Outputs:
+  ApiUrl:
+    Description: API Gateway endpoint URL
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
