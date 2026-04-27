@@ -32,7 +32,8 @@ exports.handler = async (event) => {
       };
     }
 
-    const player = JSON.parse(text);
+    const result = JSON.parse(text);
+    const player = result.data || result;
 
     return {
       statusCode: 200,
@@ -41,9 +42,11 @@ exports.handler = async (event) => {
         id: player.id,
         name: `${player.first_name} ${player.last_name}`,
         team: player.team?.full_name || "Unknown",
-        position: player.position || "N/A",
-        height: player.height || "N/A",
-        weight: player.weight || "N/A"
+        points: "N/A",
+        rebounds: "N/A",
+        assists: "N/A",
+        steals: "N/A",
+        blocks: "N/A"
       })
     };
   } catch (error) {
@@ -51,7 +54,7 @@ exports.handler = async (event) => {
       statusCode: 500,
       headers: cors(),
       body: JSON.stringify({
-        message: "Failed to fetch player info",
+        message: "Failed to fetch player stats",
         error: error.message
       })
     };

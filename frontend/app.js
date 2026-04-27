@@ -69,9 +69,11 @@ async function getStats(playerId) {
     <div class="card">
       <h3>${player.name}</h3>
       <p>Team: ${player.team}</p>
-      <p>Position: ${player.position}</p>
-      <p>Height: ${player.height}</p>
-      <p>Weight: ${player.weight}</p>
+      <p>Points: ${player.points}</p>
+      <p>Rebounds: ${player.rebounds}</p>
+      <p>Assists: ${player.assists}</p>
+      <p>Steals: ${player.steals}</p>
+      <p>Blocks: ${player.blocks}</p>
     </div>
   `;
 }
