@@ -1,18 +1,20 @@
-const AWS = require("aws-sdk");
-const db = new AWS.DynamoDB.DocumentClient();
+const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
+const { DynamoDBDocumentClient, PutCommand } = require("@aws-sdk/lib-dynamodb");
+
+const db = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
 exports.handler = async (event) => {
   try {
     const body = JSON.parse(event.body || "{}");
 
-    await db.put({
+    await db.send(new PutCommand({
       TableName: process.env.TABLE,
       Item: {
         userId: "demo",
         playerId: String(body.playerId),
         name: body.name
       }
-    }).promise();
+    }));
 
     return {
       statusCode: 200,
@@ -20,15 +22,12 @@ exports.handler = async (event) => {
       body: JSON.stringify({ success: true })
     };
   } catch (error) {
-    console.error("Save favorite error:", error);
+    console.error("SaveFavorite error:", error);
 
     return {
       statusCode: 500,
       headers: cors(),
-      body: JSON.stringify({
-        success: false,
-        message: "Failed to save favorite"
-      })
+      body: JSON.stringify({ success: false, message: error.message })
     };
   }
 };
