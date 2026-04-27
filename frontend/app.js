@@ -61,7 +61,7 @@ async function loadFavorites() {
       <div class="card">
         <h3>${player.name}</h3>
         <p>${player.team || "Unknown"} (${player.abbreviation || "N/A"})</p>
-        <p>${player.conference || "N/A"} • ${player.division || "N/A"}</p>
+        <p>${player.conference || "N/A"} - ${player.division || "N/A"}</p>
         <p>Position: ${player.position || "N/A"}</p>
         <button onclick="deleteFavorite('${player.playerId}')">Remove</button>
       </div>
