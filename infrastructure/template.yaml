@@ -43,6 +43,22 @@ Resources:
           Properties:
             Path: /teams
             Method: ANY
+    GetStatsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs18.x
+      Handler: index.handler
+      CodeUri: ../backend/getStats
+      Environment:
+        Variables:
+          API_KEY: !Ref BallDontLieApiKey
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /stats
+            Method: get
+
 
   GetPlayersFunction:
     Type: AWS::Serverless::Function

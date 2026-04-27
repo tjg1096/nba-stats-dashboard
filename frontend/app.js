@@ -23,16 +23,19 @@ async function searchPlayer() {
   });
 }
 
-async function saveFavorite(id, name) {
-  await fetch(`${API}/favorite`, {
+async function saveFavorite(player) {
+  await fetch(`${API_BASE_URL}/favorite`, {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
     body: JSON.stringify({
-      playerId: id,
-      name: name
+      playerId: String(player.id),
+      name: `${player.first_name} ${player.last_name}`
     })
   });
 
-  loadFavorites();
+  alert("Favorite saved!");
 }
 
 async function loadFavorites() {
@@ -46,6 +49,27 @@ async function loadFavorites() {
     const div = document.createElement("div");
     div.innerText = fav.name;
     container.appendChild(div);
+  });
+}
+
+async function getStats(playerId) {
+  const response = await fetch(`${API_BASE_URL}/stats?playerId=${playerId}`);
+  const data = await response.json();
+
+  const statsDiv = document.getElementById("statsResults");
+  statsDiv.innerHTML = "";
+
+  data.data.forEach(stat => {
+    statsDiv.innerHTML += `
+      <div class="card">
+        <h3>${stat.player.first_name} ${stat.player.last_name}</h3>
+        <p>Points: ${stat.pts}</p>
+        <p>Rebounds: ${stat.reb}</p>
+        <p>Assists: ${stat.ast}</p>
+        <p>Steals: ${stat.stl}</p>
+        <p>Blocks: ${stat.blk}</p>
+      </div>
+    `;
   });
 }
 
