@@ -15,7 +15,6 @@ async function searchPlayer() {
         <h3>${player.first_name} ${player.last_name}</h3>
         <p>Team: ${player.team.full_name}</p>
         <button onclick='saveFavorite(${JSON.stringify(player)})'>Save</button>
-        <button onclick="getStats('${player.id}')">View Player Info</button>
       </div>
     `;
   });
