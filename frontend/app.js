@@ -1,11 +1,12 @@
 const API_BASE_URL = "https://vfhkxgciej.execute-api.us-east-1.amazonaws.com/Prod";
 
-let currentUser = {
+let currentUser = JSON.parse(localStorage.getItem("currentUser")) || {
   userId: "demo",
   name: "Guest"
 };
 
 function handleCredentialResponse(response) {
+  localStorage.setItem("currentUser", JSON.stringify(currentUser));
   const payload = parseJwt(response.credential);
 
   currentUser = {

@@ -6,11 +6,13 @@ const db = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 exports.handler = async (event) => {
   try {
     const userId = event.queryStringParameters?.userId || "demo";
+    const playerId = event.queryStringParameters?.playerId;
+
     if (!playerId) {
       return {
         statusCode: 400,
         headers: cors(),
-        body: JSON.stringify({ message: "Missing playerId" })
+        body: JSON.stringify({ success: false, message: "Missing playerId" })
       };
     }
 
@@ -28,6 +30,8 @@ exports.handler = async (event) => {
       body: JSON.stringify({ success: true })
     };
   } catch (error) {
+    console.error("DeleteFavorite error:", error);
+
     return {
       statusCode: 500,
       headers: cors(),
